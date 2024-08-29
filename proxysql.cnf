@@ -177,7 +177,7 @@ mysql_query_rules:
         {
                 rule_id = 20
                 active = 1
-                username = "stnduseræ
+                username = "stnduser"
                 match_digest = "DISTINCT c FROM sbtest1"
                 destination_hostgroup = 2
                 apply = 1

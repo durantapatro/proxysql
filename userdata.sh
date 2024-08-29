@@ -15,7 +15,7 @@ apt-get install -y --no-install-recommends lsb-release wget apt-transport-https 
 wget -O - 'https://repo.proxysql.com/ProxySQL/proxysql-2.6.x/repo_pub_key' | apt-key add - 
 echo deb https://repo.proxysql.com/ProxySQL/proxysql-2.6.x/$(lsb_release -sc)/ ./ | tee /etc/apt/sources.list.d/proxysql.list
 apt-get update
-apt-get -y install proxysql
+apt-get install proxysql
 echo "ProxySQL Installed Successfully..."
 
 
@@ -75,7 +75,7 @@ LOAD MYSQL VARIABLES TO RUNTIME;
 SAVE MYSQL VARIABLES TO DISK;
 EOF
 
-# # Step 5: Backend’s Health Check
+# # Step 5: Backendâs Health Check
 # echo "Performing backend health checks..."
 # mysql -u admin -ppassword -h 127.0.0.1 -P6032 --prompt 'ProxySQLAdmin> ' << EOF
 # SHOW TABLES FROM monitor;
