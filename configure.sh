@@ -1,42 +1,28 @@
 #!/bin/bash
 
-apt-get update
-echo  "Installing mysql-server and mysql-client..." 
-sudo apt -y install mysql-server
-apt-get -y install mysql-client
-sudo systemctl start mysql.service
-echo  "Installed mysql client Successfully..." 
-
 # Step 1: Install ProxySQL
 echo "Installing ProxySQL..."
-
 apt-get update
 apt-get install -y --no-install-recommends lsb-release wget apt-transport-https ca-certificates gnupg
-wget -O - 'https://repo.proxysql.com/ProxySQL/proxysql-2.6.x/repo_pub_key' | apt-key add - 
-echo deb https://repo.proxysql.com/ProxySQL/proxysql-2.6.x/$(lsb_release -sc)/ ./ | tee /etc/apt/sources.list.d/proxysql.list
+
+wget -O - 'https://repo.proxysql.com/ProxySQL/proxysql-repo.gpg' | apt-key add -
+echo "deb https://repo.proxysql.com/ProxySQL/proxysql-2.0.x/$(lsb_release -sc)/ ./" | tee /etc/apt/sources.list.d/proxysql.list
+
 apt-get update
-apt-get -y install proxysql
-echo "ProxySQL Installed Successfully..."
-
-
-git clone https://github.com/durantapatro/proxysql.git
-sudo rm /etc/proxysql.cnf
-sudo cp proxysql/proxysql.cnf /etc/
-systemctl start proxysql
-
-
 #echo  "Installing proxysql and Running from tecks_proxysql.cnf"
-
+apt-get -y install proxysql
 #proxysql -c /etc/teks_proxysql.cnf
 #systemctl start proxysql
 
+echo "ProxySQL Installed Successfully..."
 
-
-
+echo  "Installing mysql client..." 
+apt-get -y install mysql-client
+echo  "Installed mysql client Successfully..." 
 
 
 # Step 2: Connect to ProxySQL and Configure Admin Credentials
-#echo "Configuring ProxySQL admin credentials..."
+echo "Configuring ProxySQL admin credentials..."
 # mysql -u admin -padmin -h 127.0.0.1 -P6032 --prompt 'ProxySQLAdmin> ' << EOF
 # UPDATE global_variables SET variable_value='admin:admin' WHERE variable_name='admin-admin_credentials';
 # LOAD ADMIN VARIABLES TO RUNTIME;
@@ -44,7 +30,7 @@ systemctl start proxysql
 # EOF
 
 # Step 3: Add Backends to ProxySQL
-#echo "Adding MySQL backends..."
+echo "Adding MySQL backends..."
 # mysql -u admin -padmin -h 127.0.0.1 -P6032 --prompt 'ProxySQLAdmin> ' << EOF
 # INSERT INTO mysql_group_replication_hostgroups (writer_hostgroup, backup_writer_hostgroup, reader_hostgroup, offline_hostgroup, active, max_writers, writer_is_also_reader, max_transactions_behind) VALUES (2, 4, 3, 1, 1, 3, 1, 100);
 # INSERT INTO mysql_servers(hostgroup_id,hostname,port) VALUES (1,'10.0.0.1',3306);
@@ -53,12 +39,11 @@ systemctl start proxysql
 # LOAD MYSQL SERVERS TO RUNTIME;
 # SAVE MYSQL SERVERS TO DISK;
 # EOF
-#echo "MySQL backends Added..."
+echo "MySQL backends Added..."
 
 # Step 4: Configure Monitoring on MySQL Server
 echo "Configuring monitoring on MySQL server..."
-#mysql -u root -p -e "
-mysql -e "
+mysql -u root -p -e "
 CREATE USER 'monitor'@'%' IDENTIFIED BY 'monitor';
 #GRANT SELECT on sys.* to 'monitor'@'%';
 #GRANT SELECT on performance_schema.* to 'monitor'@'%';
@@ -87,11 +72,9 @@ EOF
 
 # Step 6: Create MySQL Users
 echo "Creating MySQL users..."
-mysql -e "
+mysql -u root -p -e "
 CREATE USER 'duranta'@'%' IDENTIFIED BY 'duranta';
 GRANT ALL PRIVILEGES ON *.* TO 'duranta'@'%';
-CREATE USER 'stnduser'@'%' IDENTIFIED BY 'stnduser';
-GRANT ALL PRIVILEGES ON *.* TO 'stnduser'@'%';
 "
 
 # echo "Adding MySQL user to ProxySQL..."

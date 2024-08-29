@@ -136,12 +136,12 @@ mysql_users:
 (
         {
                 username = "stnduser"
-                password = "{{ mysql_password('stnduser') }}" 
+                password = "stnduser" 
                 default_hostgroup = 1
         },
         {
                 username = "duranta"
-                password = "{{ mysql_password('duranta') }}"
+                password = "duranta"
                 default_hostgroup = 1
         }
 #       {

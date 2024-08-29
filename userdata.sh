@@ -24,6 +24,7 @@ sudo rm /etc/proxysql.cnf
 sudo cp proxysql/proxysql.cnf /etc/
 systemctl start proxysql
 
+sudo apt install net-tools
 
 #echo  "Installing proxysql and Running from tecks_proxysql.cnf"
 
