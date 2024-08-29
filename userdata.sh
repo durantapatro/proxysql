@@ -19,7 +19,7 @@ apt-get install proxysql
 echo "ProxySQL Installed Successfully..."
 
 
-git clone https://github.com/durantapatro/proxysql.git
+git clone https://github.com/durantapatro/proxysql.git --branch password/no_hash
 sudo rm /etc/proxysql.cnf
 sudo cp proxysql/proxysql.cnf /etc/
 systemctl start proxysql
